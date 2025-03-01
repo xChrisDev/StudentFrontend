@@ -14,6 +14,10 @@ onMounted(() => {
     }, 200);
 });
 
+const showEmit = (type) => {
+  console.log(type)
+}
+
 const searchStudent = async () => {
     if (user_id.value) {
         student.value = await getStudents(`http://127.0.0.1:8000/api/students/${user_id.value}`);
@@ -36,7 +40,11 @@ const searchStudent = async () => {
                 </Button>
             </div>
 
-            <StudentCard v-if="student != null" :student="student" />
+            <StudentCard
+                v-if="student != null" 
+                :student="student" 
+                @deleted="showEmit('delete')"
+                @edited="showEmit('update')" />
         </div>
     </Transition>
 </template>

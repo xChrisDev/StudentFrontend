@@ -5,14 +5,25 @@ import { getStudents } from "../api/utils";
 
 const students = ref([]);
 
-onMounted(async () => {
+const fetchStudents = async () => {
   students.value = await getStudents("http://127.0.0.1:8000/api/students");
-});
+};
 
+const showEmit = (type) => {
+  console.log(type)
+}
+
+onMounted(fetchStudents);
 </script>
 
 <template>
-  <div class="flex flex-wrap justify-center gap-2">
-    <StudentCard v-for="student in students" :key="student.id" :student="student" />
+  <div class="flex flex-wrap justify-center gap-3">
+    <StudentCard 
+      v-for="student in students" 
+      :key="student.id" 
+      :student="student"
+      @deleted="showEmit('delete')"  
+      @edited="showEmit('update')"   
+    />
   </div>
 </template>
