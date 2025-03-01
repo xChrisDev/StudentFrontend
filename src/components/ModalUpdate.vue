@@ -1,6 +1,7 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
 import { Avatar, Button, Dialog, InputText, FloatLabel } from 'primevue';
+import { updateStudent } from '../api/utils.js'
 
 const props = defineProps({
     student: {
@@ -13,20 +14,52 @@ const props = defineProps({
     }
 });
 
+const name = ref("")
+const lastname = ref("")
+const age = ref("")
+const career = ref("")
+
+const updateFields = () => {
+    if (props.student) {
+        name.value = props.student.name
+        lastname.value = props.student.lastname
+        age.value = props.student.age
+        career.value = props.student.career
+    }
+}
+
+watch(() => props.visible, (newVal) => {
+    if (newVal) {
+        updateFields();
+    }
+});
+
 const emit = defineEmits(["edited", "update:visible"]);
 
-const handleUpdate = () => {
-    emit("edited");
+const handleUpdate = async () => {
+  try {
+    const updatedStudent = {
+      name: name.value,
+      lastname: lastname.value,
+      age: age.value,
+      career: career.value
+    };
+
+    // Verifica que props.student.id esté definido
+    console.log(updatedStudent);
+
+    const response = await updateStudent(
+      `http://127.0.0.1:8000/api/students/${props.student.id}`, 
+      JSON.stringify(updatedStudent)
+    );
+
+    emit("edited", updatedStudent);
     emit("update:visible", false);
-    // const data = {
-    //     'name': student.name,
-    //     'lastname': student.lastname,
-    //     'age': student.age,
-    //     'career': student.career,
-    // }
-    // // console.log(data)
-    // updateStudent(`http://127.0.0.1:8000/api/students/${student.id}`, data)
+  } catch (error) {
+    console.error("Error al actualizar estudiante:", error);
+  }
 };
+
 </script>
 
 <template>
@@ -34,25 +67,25 @@ const handleUpdate = () => {
         <template #header>
             <div class="inline-flex items-center justify-center gap-2">
                 <Avatar icon="pi pi-user" class="mr-1 border-2 border-white" shape="circle" />
-                <span class="font-bold whitespace-nowrap">{{ student.name }} {{ student.lastname }}</span>
+                <span class="font-bold whitespace-nowrap">{{ name }} {{ lastname }}</span>
             </div>
         </template>
 
         <FloatLabel class="mb-2" variant="in">
             <label for="name" class="font-semibold w-24">Nombre</label>
-            <InputText id="name" class="w-full" autocomplete="off" v-model="student.name" />
+            <InputText id="name" class="w-full" autocomplete="off" v-model="name" />
         </FloatLabel>
         <FloatLabel class="mb-2" variant="in">
             <label for="lastname" class="font-semibold w-24">Apellido</label>
-            <InputText id="lastname" class="w-full" autocomplete="off" v-model="student.lastname" />
+            <InputText id="lastname" class="w-full" autocomplete="off" v-model="lastname" />
         </FloatLabel>
         <FloatLabel class="mb-2" variant="in">
             <label for="age" class="font-semibold w-24">Edad</label>
-            <InputText id="age" class="w-full" autocomplete="off" v-model="student.age" />
+            <InputText id="age" class="w-full" autocomplete="off" v-model="age" />
         </FloatLabel>
         <FloatLabel class="mb-2" variant="in">
             <label for="career" class="font-semibold w-24">Carrera</label>
-            <InputText id="career" class="w-full" autocomplete="off" v-model="student.career" />
+            <InputText id="career" class="w-full" autocomplete="off" v-model="career" />
         </FloatLabel>
 
         <template #footer>

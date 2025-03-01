@@ -13,8 +13,8 @@ const { student } = defineProps({
 
 const emit = defineEmits(["deleted", "edited"]);
 const isLoaded = ref(false);
-const showUpdateModal = ref(false); // Estado para controlar la visibilidad del modal de edición
-const showDeleteModal = ref(false); // Estado para el modal de eliminación
+const showUpdateModal = ref(false);
+const showDeleteModal = ref(false);
 
 onMounted(() => {
     setTimeout(() => {
@@ -26,7 +26,7 @@ onMounted(() => {
 <template>
     <Transition name="fade">
         <div v-if="isLoaded && student.name">
-            <div class="bg-[#262626] shadow-lg rounded-lg w-[300px] h-[270px] mb-1 flex flex-col">
+            <div class="bg-[#262626] shadow-lg rounded-lg w-[300px] h-[270px] mb-1 flex flex-col hover:scale-[1.02] transition-all">
                 <!-- Encabezado con gradiente -->
                 <div class="bg-gradient-to-r from-green-400 to-teal-500 rounded-t-lg">
                     <div class="flex items-end h-28">

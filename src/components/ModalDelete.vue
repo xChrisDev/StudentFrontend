@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
-import { Avatar, Button, Dialog, InputText, FloatLabel } from 'primevue';
+import { Avatar, Button, Dialog } from 'primevue';
+import { deleteStudent } from '../api/utils';
 
 const props = defineProps({
     student: {
@@ -14,10 +15,10 @@ const props = defineProps({
 });
 const emit = defineEmits(["deleted", "update:visible"]);
 
-const handleDelete = () => {
+const handleDelete = async () => {
+    await deleteStudent(`http://127.0.0.1:8000/api/students/${props.student.id}`);
     emit("deleted");
-    emit("update:visible", false); // Cerramos el modal después de eliminar
-    // await deleteStudent(http://127.0.0.1:8000/api/students/${id});
+    emit("update:visible", false);
 };
 </script>
 

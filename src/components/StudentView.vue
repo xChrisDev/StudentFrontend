@@ -3,7 +3,10 @@ import { InputGroup, InputGroupAddon, InputText, Button } from "primevue";
 import { ref, onMounted } from "vue";
 import StudentCard from "./StudentCard.vue";
 import { getStudents } from "../api/utils";
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
 const user_id = ref(null);
 const student = ref(null);
 const isLoaded = ref(false);
@@ -14,8 +17,12 @@ onMounted(() => {
     }, 200);
 });
 
-const showEmit = (type) => {
-  console.log(type)
+const handleDelete = () => {
+    toast.add({ severity: 'error', summary: 'Eliminación', detail: 'El alumno se ha eliminado correctamente', life: 4000 });
+}
+
+const handleUpdate = () => {
+    toast.add({ severity: 'warn', summary: 'Actualización', detail: 'El alumno se ha actualizado correctamente', life: 4000 });
 }
 
 const searchStudent = async () => {
@@ -27,7 +34,7 @@ const searchStudent = async () => {
 
 <template>
     <Transition name="fade">
-        <div v-if="isLoaded" class="flex flex-col gap-4 w-[30%]">
+        <div v-if="isLoaded" class="flex flex-col items-center gap-4 w-[30%]">
             <div class="flex gap-2">
                 <InputGroup>
                     <InputGroupAddon>
@@ -40,11 +47,9 @@ const searchStudent = async () => {
                 </Button>
             </div>
 
-            <StudentCard
-                v-if="student != null" 
-                :student="student" 
-                @deleted="showEmit('delete')"
-                @edited="showEmit('update')" />
+            <StudentCard v-if="student != null" :student="student" @deleted="handleDelete"
+                @edited="handleUpdate" />
+            <Toast position="top-right"/>
         </div>
     </Transition>
 </template>
