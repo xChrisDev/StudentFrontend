@@ -3,10 +3,6 @@ import { InputGroup, InputGroupAddon, InputText, Button } from "primevue";
 import { ref, onMounted } from "vue";
 import StudentCard from "./StudentCard.vue";
 import { getStudents } from "../api/utils";
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
-
-const toast = useToast();
 const user_id = ref(null);
 const student = ref(null);
 const isLoaded = ref(false);
@@ -18,11 +14,13 @@ onMounted(() => {
 });
 
 const handleDelete = () => {
-    toast.add({ severity: 'error', summary: 'Eliminación', detail: 'El alumno se ha eliminado correctamente', life: 4000 });
+    // toast.add({ severity: 'error', summary: 'Eliminación', detail: 'El alumno se ha eliminado correctamente', life: 4000 });
+    searchStudent()
 }
 
 const handleUpdate = () => {
-    toast.add({ severity: 'warn', summary: 'Actualización', detail: 'El alumno se ha actualizado correctamente', life: 4000 });
+    // toast.add({ severity: 'warn', summary: 'Actualización', detail: 'El alumno se ha actualizado correctamente', life: 4000 });
+    searchStudent()
 }
 
 const searchStudent = async () => {
@@ -47,8 +45,7 @@ const searchStudent = async () => {
                 </Button>
             </div>
 
-            <StudentCard v-if="student != null" :student="student" @deleted="handleDelete"
-                @edited="handleUpdate" />
+            <StudentCard v-if="student != null" :student="student" @deleted="handleDelete" @edited="handleUpdate" />
             <Toast position="top-right"/>
         </div>
     </Transition>

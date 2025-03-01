@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, defineEmits, defineProps } from 'vue';
-import { Avatar, Button } from 'primevue';
+import { Avatar, Button, Skeleton } from 'primevue';
 import ModalUpdate from './ModalUpdate.vue';
 import ModalDelete from './ModalDelete.vue';
 
@@ -19,13 +19,24 @@ const showDeleteModal = ref(false);
 onMounted(() => {
     setTimeout(() => {
         isLoaded.value = true;
-    }, 200);
+    }, 300);
 });
 </script>
 
 <template>
     <Transition name="fade">
-        <div v-if="isLoaded && student.name">
+        <!-- Muestra Skeleton mientras se carga -->
+        <div v-if="!isLoaded && student.name">
+            <Skeleton width="300px" height="270px" class="mb-1"></Skeleton>
+        </div>
+
+        <!-- Si ya cargó pero no hay estudiante, muestra el mensaje -->
+        <div v-else-if="!student || !student.name">
+            <h1>Estudiante no encontrado :(</h1>
+        </div>
+
+        <!-- Si ya cargó y hay estudiante, muestra la tarjeta -->
+        <div v-else>
             <div class="bg-[#262626] shadow-lg rounded-lg w-[300px] h-[270px] mb-1 flex flex-col hover:scale-[1.02] transition-all">
                 <!-- Encabezado con gradiente -->
                 <div class="bg-gradient-to-r from-green-400 to-teal-500 rounded-t-lg">
@@ -59,3 +70,4 @@ onMounted(() => {
     <ModalUpdate :student="student" v-model:visible="showUpdateModal" @edited="emit('edited')" />
     <ModalDelete :student="student" v-model:visible="showDeleteModal" @deleted="emit('deleted')" />
 </template>
+

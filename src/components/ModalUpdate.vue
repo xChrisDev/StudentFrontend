@@ -2,7 +2,10 @@
 import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
 import { Avatar, Button, Dialog, InputText, FloatLabel } from 'primevue';
 import { updateStudent } from '../api/utils.js'
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
 const props = defineProps({
     student: {
         type: Object,
@@ -45,13 +48,16 @@ const handleUpdate = async () => {
       career: career.value
     };
 
-    // Verifica que props.student.id esté definido
-    console.log(updatedStudent);
-
-    const response = await updateStudent(
+    const data = await updateStudent(
       `http://127.0.0.1:8000/api/students/${props.student.id}`, 
       JSON.stringify(updatedStudent)
     );
+
+    if(data.message === 'Error en la validación de datos'){
+        toast.add({ severity: 'error', summary: 'Actualizar', detail: 'El alumno NO se pudo actualizar', life: 4000 });
+    }else{
+        toast.add({ severity: 'warn', summary: 'Actualizado correctamente', detail: 'Alumno actualizado correctamente', life: 4000 });
+    }
 
     emit("edited", updatedStudent);
     emit("update:visible", false);
@@ -93,4 +99,5 @@ const handleUpdate = async () => {
             <Button label="Guardar" outlined severity="success" @click="handleUpdate" />
         </template>
     </Dialog>
+    <Toast position="top-right" group="br" />
 </template>

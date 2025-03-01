@@ -2,6 +2,10 @@
 import { defineProps, defineEmits, ref } from 'vue';
 import { Button, Dialog, InputText, FloatLabel } from 'primevue';
 import { addStudent } from '../api/utils';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
 
 const props = defineProps({
     visible: {
@@ -19,7 +23,12 @@ const student = ref({
 });
 
 const handleAdd = async () => {
-    await addStudent('http://127.0.0.1:8000/api/students', JSON.stringify(student.value))
+    const data = await addStudent('http://127.0.0.1:8000/api/students', JSON.stringify(student.value))
+    if(data.message === 'Error en la recoleccion de datos'){
+        toast.add({ severity: 'error', summary: 'Agregar', detail: 'El alumno NO se pudo agregar', life: 4000 });
+    }else{
+        toast.add({ severity: 'success', summary: 'Agregado correctamente', detail: 'El alumno se ha añadido correctamente', life: 4000 });
+    }
     emit("add", student.value);
     emit("update:visible", false);
 };
@@ -51,4 +60,5 @@ const handleAdd = async () => {
             <Button label="Guardar" outlined severity="success" @click="handleAdd" />
         </template>
     </Dialog>
+    <Toast position="top-right" group="br" />
 </template>

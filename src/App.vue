@@ -1,20 +1,23 @@
 <script setup>
 import StudentsView from '../src/components/StudentsView.vue'
 import StudentView from '../src/components/StudentView.vue'
-import { SelectButton, Button } from 'primevue';
-import { ref } from 'vue';
 import ModalAdd from './components/ModalAdd.vue';
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
+import { getStudents } from './api/utils';
+import { SelectButton, Button } from 'primevue';
+import { ref, onMounted } from 'vue';
 
-const toast = useToast();
 const value = ref('Mostrar');
 const options = ref(['Mostrar', 'Filtrar']);
 const showAddModal = ref(false);
 
-const handleAdd = () => {
-  toast.add({ severity: 'success', summary: 'Creación', detail: 'El alumno se ha registrado correctamente', group: 'br', life: 4000 });
-}
+const students = ref([]);
+
+const fetchStudents = async () => {
+  students.value = await getStudents("http://127.0.0.1:8000/api/students");
+};
+
+onMounted(fetchStudents);
+
 </script>
 
 <template>
@@ -32,10 +35,9 @@ const handleAdd = () => {
       <StudentView />
     </div>
     <div class="flex justify-center w-full" v-else>
-      <StudentsView />
+      <StudentsView :students="students" @update="fetchStudents" @delete="fetchStudents"/>
     </div>
 
-    <ModalAdd v-model:visible="showAddModal" @add="handleAdd" />
-    <Toast position="top-right" group="br" />
+    <ModalAdd v-model:visible="showAddModal" @add="fetchStudents"/>
   </div>
 </template>
